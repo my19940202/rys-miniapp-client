@@ -1,21 +1,2 @@
-<view class="visit-list">
-  <!-- 导览列表 -->
-  <view class="visit-item" wx:for="{{visitList}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
-    <view class="visit-image">
-      <image src="{{item.coverImage}}" mode="aspectFill" />
-    </view>
-    <view class="visit-info">
-      <view class="visit-title">{{item.title}}</view>
-      <view class="visit-desc">{{item.description}}</view>
-      <view class="visit-meta">
-        <text class="visit-duration">🎧 {{item.duration}}</text>
-        <text class="visit-category">{{item.category}}</text>
-      </view>
-    </view>
-  </view>
-  
-  <!-- 空状态 -->
-  <view class="empty-state" wx:if="{{visitList.length === 0}}">
-    <text>暂无导览内容</text>
-  </view>
-</view>
+<!--pages/visit/index.wxml-->
+<text>pages/visit/index.wxml</text>

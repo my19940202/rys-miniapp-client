@@ -1,0 +1,57 @@
+<view class="detail-container">
+  <!-- 顶部封面图 -->
+  <view class="detail-cover">
+    <image src="{{visitDetail.coverImage}}" mode="aspectFill" />
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="detail-content">
+    <!-- 标题 -->
+    <view class="detail-header">
+      <view class="detail-title">{{visitDetail.title}}</view>
+      <view class="detail-meta">
+        <text class="category">{{visitDetail.category}}</text>
+        <text class="duration">🎧 {{visitDetail.duration}}</text>
+      </view>
+    </view>
+
+    <!-- 语音播放器 -->
+    <view class="audio-player">
+      <view class="audio-control" bindtap="toggleAudio">
+        <view class="audio-icon">{{isPlaying ? '⏸' : '▶'}}</view>
+        <text class="audio-text">{{isPlaying ? '暂停播放' : '播放语音讲解'}}</text>
+      </view>
+      <view class="audio-progress" wx:if="{{isPlaying || currentTime > 0}}">
+        <slider 
+          value="{{currentTime}}" 
+          max="{{duration}}" 
+          activeColor="#07c160"
+          backgroundColor="#e0e0e0"
+          block-size="12"
+          bindchange="onSliderChange"
+        />
+        <view class="audio-time">
+          <text>{{formatTime(currentTime)}}</text>
+          <text>{{formatTime(duration)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 详细内容 -->
+    <view class="detail-text">
+      <text>{{visitDetail.content}}</text>
+    </view>
+
+    <!-- 相关推荐 -->
+    <view class="recommend-section" wx:if="{{recommendList.length > 0}}">
+      <view class="section-title">相关推荐</view>
+      <view class="recommend-list">
+        <view class="recommend-item" wx:for="{{recommendList}}" wx:key="id" bindtap="goToOtherDetail" data-id="{{item.id}}">
+          <image src="{{item.coverImage}}" mode="aspectFill" />
+          <text>{{item.title}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+

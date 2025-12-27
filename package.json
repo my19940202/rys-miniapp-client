@@ -1,11 +1,11 @@
 {
-  "name": "bobo_elaine_minigrogram",
+  "name": "riyueshan_miniapp",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "tdesign-miniprogram": "^1.8.5"
+    "tdesign-miniprogram": "^1.12.0"
   }
 }
