@@ -1,0 +1,53 @@
+/**app.wxss**/
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: #f6f6f6;
+}
+
+button {
+    background: initial;
+}
+
+button:focus {
+    outline: 0;
+}
+
+button::after {
+    border: none;
+}
+
+page {
+    background: #f6f6f6;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.card-button {
+    width: 70vw;
+    margin: 5vh auto 0 auto;
+}
+
+.t-button {
+    --td-button-primary-bg-color: rgb(7, 193, 96);
+    --td-button-primary-active-bg-color: #999;
+}
+
+.card-button .t-button {
+    width: 100%;
+}
+
+.card-button .t-button .t-icon {
+    padding-right: 20rpx;
+}
+
+.active {
+    background-color: rgba(7, 193, 96, 0.5);
+}
+
+.flex-container .t-calendar-header__with-action {
+    display: none !important;
+}

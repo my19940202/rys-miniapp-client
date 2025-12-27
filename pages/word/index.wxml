@@ -1,0 +1,21 @@
+<view class="container">
+    <t-message id="t-message" />
+    <view class="flex-container">
+        <t-calendar
+            use-popup="{{false}}"
+            visible="{{true}}"
+            show-confirm="{{false}}"
+            min-date="{{minDate}}"
+            max-date="{{maxDate}}"
+            switch-mode="year-month"
+            format="{{dateFormat}}"
+            bind:select="handleDateChange"
+            title="单词打卡"
+            value="{{date}}"
+            type="single"
+        />
+        <view class="card-button">
+            <t-button disabled="{{disabled}}" size="large" icon="gesture-right" theme="primary" bind:tap="handleBtnClick">开始背单词吧</t-button>
+        </view>
+    </view>
+</view>

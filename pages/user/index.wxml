@@ -1,0 +1,6 @@
+<view class="container">
+    <view class="userinfo">
+        <t-cell leftIcon="user" title="个人信息" jump-type="navigateTo" url="/pages/form/index" hover arrow />
+        <t-cell leftIcon="ellipsis" title="隐私政策" jump-type="navigateTo" url="/pages/about/index" hover arrow />
+    </view>
+</view>

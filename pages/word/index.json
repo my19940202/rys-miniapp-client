@@ -1,0 +1,10 @@
+{
+    "backgroundTextStyle": "dark",
+    "navigationBarTextStyle": "white",
+    "usingComponents": {
+        "t-cell": "tdesign-miniprogram/cell/cell",
+        "t-button": "tdesign-miniprogram/button/button",
+        "t-link": "tdesign-miniprogram/link/link",
+        "t-calendar": "tdesign-miniprogram/calendar/calendar"
+    }
+}

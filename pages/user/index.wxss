@@ -1,0 +1,12 @@
+/**index.wxss**/
+
+page {
+    padding: 0 5rpx;
+    background-color: #f6f6f6;
+}
+.userinfo {
+    width: 100%;
+}
+.userinfo .t-icon {
+    color: #07c160;
+}

@@ -1,0 +1,11 @@
+{
+    "backgroundTextStyle": "dark",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "景区导览",
+    "usingComponents": {
+        "t-tabs": "tdesign-miniprogram/tabs/tabs",
+        "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+        "t-popup": "tdesign-miniprogram/popup/popup",
+        "t-button": "tdesign-miniprogram/button/button"
+    }
+}

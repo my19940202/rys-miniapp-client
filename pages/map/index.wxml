@@ -1,0 +1,89 @@
+<view class="map-container">
+  <!-- 顶部固定Tabs -->
+  <view class="tabs-wrapper">
+    <t-tabs value="{{currentTab}}" bind:change="onTabChange" theme="tag">
+      <t-tab-panel 
+        wx:for="{{categories}}" 
+        wx:key="value"
+        label="{{item.emoji}} {{item.label}}" 
+        value="{{item.value}}"
+      />
+    </t-tabs>
+  </view>
+
+  <!-- 地图组件 -->
+  <map
+    id="scenic-map"
+    class="map"
+    latitude="{{mapCenter.latitude}}"
+    longitude="{{mapCenter.longitude}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    polyline="{{polylines}}"
+    show-location
+    bindmarkertap="onMarkerTap"
+  >
+    <!-- 左下角控制按钮组 -->
+    <cover-view class="control-group left-bottom">
+      <cover-view class="control-btn" bindtap="handleZoom" data-action="in">
+        <cover-view class="btn-text">+</cover-view>
+      </cover-view>
+      <cover-view class="control-btn" bindtap="handleZoom" data-action="out">
+        <cover-view class="btn-text">-</cover-view>
+      </cover-view>
+      <cover-view class="control-btn" bindtap="handleLocation">
+        <cover-view class="btn-text">📍</cover-view>
+      </cover-view>
+    </cover-view>
+
+    <!-- 右上角路线按钮 -->
+    <cover-view class="control-group right-top">
+      <cover-view class="control-btn route-btn {{showRoute ? 'active' : ''}}" bindtap="toggleRoute">
+        <cover-view class="btn-text">{{showRoute ? '隐藏' : '路线'}}</cover-view>
+      </cover-view>
+    </cover-view>
+  </map>
+
+  <!-- 景点详情弹窗 -->
+  <t-popup
+    visible="{{showPopup}}"
+    bind:visible-change="closePopup"
+    placement="bottom"
+    close-on-overlay-click
+  >
+    <view class="popup-content" wx:if="{{currentSpot}}">
+      <view class="popup-header">
+        <view class="spot-emoji">{{currentSpot.emoji}}</view>
+        <view class="spot-title">{{currentSpot.title}}</view>
+      </view>
+      
+      <!-- 景点图片（如果有） -->
+      <view class="spot-images" wx:if="{{currentSpot.images && currentSpot.images.length > 0}}">
+        <image 
+          wx:for="{{currentSpot.images}}" 
+          wx:key="index"
+          src="{{item}}" 
+          class="spot-image"
+          mode="aspectFill"
+        />
+      </view>
+      
+      <!-- 景点描述 -->
+      <view class="spot-description">
+        {{currentSpot.description}}
+      </view>
+      
+      <!-- 语音讲解按钮 -->
+      <view class="audio-section">
+        <t-button theme="primary" size="medium" bindtap="playAudio" block>
+          🔊 语音讲解
+        </t-button>
+      </view>
+      
+      <!-- 关闭按钮 -->
+      <view class="close-btn" bindtap="closePopup">
+        <t-button theme="light" size="small" block>关闭</t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>
