@@ -5,11 +5,9 @@
         "pages/spots/index",
         "pages/spots/detail/index",
         "pages/exhibits/index",
-        "pages/user/index",
         "pages/about/index",
         "pages/visit/index",
-        "pages/visit/detail/index",
-        "pages/word/index"
+        "pages/visit/detail/index"
     ],
     "lazyCodeLoading": "requiredComponents",
     "usingComponents": {
@@ -37,14 +35,14 @@
         "list": [
             {
                 "pagePath": "pages/guide/index",
-                "iconPath": "images/word.png",
-                "selectedIconPath": "images/word_active.png",
+                "iconPath": "images/chat.png",
+                "selectedIconPath": "images/chat_active.png",
                 "text": "导览"
             },
             {
                 "pagePath": "pages/map/index",
-                "iconPath": "images/word.png",
-                "selectedIconPath": "images/word_active.png",
+                "iconPath": "images/map.png",
+                "selectedIconPath": "images/map_active.png",
                 "text": "地图"
             },
             {
