@@ -47,14 +47,14 @@
             },
             {
                 "pagePath": "pages/spots/index",
-                "iconPath": "images/word.png",
-                "selectedIconPath": "images/word_active.png",
+                "iconPath": "images/spots.png",
+                "selectedIconPath": "images/spots_active.png",
                 "text": "景点"
             },
             {
                 "pagePath": "pages/exhibits/index",
-                "iconPath": "images/user.png",
-                "selectedIconPath": "images/user_active.png",
+                "iconPath": "images/exhibits.png",
+                "selectedIconPath": "images/exhibits_active.png",
                 "text": "展品"
             }
         ]

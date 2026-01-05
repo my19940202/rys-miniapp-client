@@ -1,5 +1,8 @@
 {
     "backgroundTextStyle": "dark",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "关于我们"
+    "navigationBarTitleText": "AI导览",
+    "usingComponents": {
+        "agent-ui": "/components/agent-ui/index"
+    }
 }

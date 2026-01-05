@@ -1,5 +1,8 @@
-<view class="container">
-    <text  class="title-p">
-        导览界面
-    </text>
+<view>
+    <agent-ui
+        wx:if="{{showAgent}}"
+        agentConfig="{{agentConfig}}"
+        showBotAvatar="{{showBotAvatar}}"
+        chatMode="{{chatMode}}">
+    </agent-ui>
 </view>
