@@ -86,7 +86,7 @@ page {
   width: 120rpx;
   padding: 0 20rpx;
   border-radius: 50rpx;
-  background: #07c160;
+  background: #D4A574;
 }
 
 .route-btn .btn-text {

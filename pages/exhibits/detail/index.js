@@ -1,8 +1,8 @@
-// pages/spots/detail/index.js
+// pages/exhibits/detail/index.js
 
 Page({
   data: {
-    spotDetail: {},
+    exhibitDetail: {},
     isPlaying: false,
     currentTime: 0,
     duration: 0,
@@ -37,13 +37,13 @@ Page({
       const me = getApp();
       await me.getInitPromise();
 
-      const res = await me.globalData.db.collection('scenic_spots').doc(id).get();
+      const res = await me.globalData.db.collection('exhibits').doc(id).get();
       const data = res.data;
 
       if (data) {
         const audioDuration = data.audio?.duration || 0;
         this.setData({
-          spotDetail: {
+          exhibitDetail: {
             _id: data._id,
             name: data.name,
             description: data.description,
@@ -61,7 +61,7 @@ Page({
         }
       }
     } catch (err) {
-      console.error('获取景点详情失败:', err);
+      console.error('获取展品详情失败:', err);
       wx.showToast({
         title: '加载失败',
         icon: 'none'
@@ -177,21 +177,22 @@ Page({
 
   // 分享转发功能
   onShareAppMessage() {
-    const { spotDetail, swiperList } = this.data;
+    const { exhibitDetail, swiperList } = this.data;
     return {
-      title: `日月山景区 - ${spotDetail.name || '导览详情'}`,
-      path: `/pages/spots/detail/index?id=${spotDetail._id}`,
+      title: `日月山景区 - ${exhibitDetail.name || '导览详情'}`,
+      path: `/pages/exhibits/detail/index?id=${exhibitDetail._id}`,
       imageUrl: swiperList[0] || ''
     };
   },
 
   // 分享到朋友圈
   onShareTimeline() {
-    const { spotDetail, swiperList } = this.data;
+    const { exhibitDetail, swiperList } = this.data;
     return {
-      title: `日月山景区 - ${spotDetail.name || '导览详情'}`,
-      query: `id=${spotDetail._id}`,
+      title: `日月山景区 - ${exhibitDetail.name || '导览详情'}`,
+      query: `id=${exhibitDetail._id}`,
       imageUrl: swiperList[0] || ''
     };
   }
 });
+

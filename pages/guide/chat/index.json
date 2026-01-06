@@ -3,6 +3,6 @@
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "AI导览",
     "usingComponents": {
-        "t-icon": "tdesign-miniprogram/icon/icon"
+        "agent-ui": "/components/agent-ui/index"
     }
 }

@@ -1,4 +1,4 @@
-/* pages/spots/detail/index.wxss */
+/* pages/exhibits/detail/index.wxss */
 
 page {
   background-color: #fff;
@@ -99,3 +99,4 @@ page {
   white-space: pre-wrap;
   margin-bottom: 40rpx;
 }
+

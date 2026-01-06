@@ -1,3 +1,9 @@
 {
-    "usingComponents": {}
+    "backgroundTextStyle": "dark",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "展品导览",
+    "enablePullDownRefresh": true,
+    "usingComponents": {
+        "t-icon": "tdesign-miniprogram/icon/icon"
+    }
 }

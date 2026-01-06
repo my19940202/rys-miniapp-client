@@ -1,5 +1,9 @@
 {
     "backgroundTextStyle": "dark",
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "景点导览"
+    "navigationBarTitleText": "景点导览",
+    "enablePullDownRefresh": true,
+    "usingComponents": {
+        "t-icon": "tdesign-miniprogram/icon/icon"
+    }
 }

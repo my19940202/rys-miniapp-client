@@ -28,20 +28,20 @@
   <view class="detail-content">
     <!-- 标题 -->
     <view class="detail-header">
-      <view class="detail-title">{{spotDetail.name}}</view>
-      <view class="detail-meta" wx:if="{{spotDetail.duration}}">
+      <view class="detail-title">{{exhibitDetail.name}}</view>
+      <view class="detail-meta" wx:if="{{exhibitDetail.duration}}">
         <t-icon name="sound" size="32rpx" />
-        <text class="duration">{{spotDetail.durationText}}</text>
+        <text class="duration">{{exhibitDetail.durationText}}</text>
       </view>
     </view>
 
     <!-- 语音播放器 -->
-    <view class="audio-player" wx:if="{{spotDetail.audioUrl}}">
+    <view class="audio-player" wx:if="{{exhibitDetail.audioUrl}}">
       <view class="audio-control" bindtap="toggleAudio">
         <view class="audio-icon">
           <t-icon name="{{isPlaying ? 'pause-circle-stroke' : 'play-circle-stroke'}}" size="80rpx" color="#fff" />
         </view>
-        <view class="audio-progress" wx:if="{{spotDetail.audioUrl}}">
+        <view class="audio-progress" wx:if="{{exhibitDetail.audioUrl}}">
           <slider 
             value="{{currentTime}}" 
             max="{{duration}}" 
@@ -60,7 +60,8 @@
 
     <!-- 详细内容 -->
     <view class="detail-text">
-      <text>{{spotDetail.description}}</text>
+      <text>{{exhibitDetail.description}}</text>
     </view>
   </view>
 </view>
+

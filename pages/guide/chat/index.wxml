@@ -1,0 +1,9 @@
+<view>
+    <agent-ui
+        id="agentUI"
+        wx:if="{{showAgent}}"
+        agentConfig="{{agentConfig}}"
+        showBotAvatar="{{showBotAvatar}}"
+        chatMode="{{chatMode}}">
+    </agent-ui>
+</view>

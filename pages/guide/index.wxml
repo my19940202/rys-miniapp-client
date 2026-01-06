@@ -1,8 +1,32 @@
-<view>
-    <agent-ui
-        wx:if="{{showAgent}}"
-        agentConfig="{{agentConfig}}"
-        showBotAvatar="{{showBotAvatar}}"
-        chatMode="{{chatMode}}">
-    </agent-ui>
+<view class="container">
+    <!-- 头像区域 -->
+    <view class="avatar-section">
+        <image class="avatar" src="https://636c-cloud1-9gzmqwpsa8336a66-1393371278.tcb.qcloud.la/images/ai-bot/ai-avatar.png" mode="aspectFill"></image>
+    </view>
+
+    <!-- 标题 -->
+    <view class="title">Hello！</view>
+
+    <!-- 欢迎语 -->
+    <view class="welcome-text">Hello！我是AI导游小月，点击与我对话吧~</view>
+
+    <!-- 问题列表 -->
+    <view class="question-list">
+        <view 
+            class="question-item" 
+            wx:for="{{questions}}" 
+            wx:key="index"
+            hover-class="question-item-hover"
+            bindtap="onQuestionTap"
+            data-question="{{item.text}}"
+        >
+            <view class="question-content">
+                <text class="question-icon">{{item.icon}}</text>
+                <text class="question-text">{{item.text}}</text>
+            </view>
+            <view class="question-arrow">
+                <t-icon name="chevron-right-circle" size="48rpx" />
+            </view>
+        </view>
+    </view>
 </view>

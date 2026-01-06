@@ -5,9 +5,8 @@
         "pages/spots/index",
         "pages/spots/detail/index",
         "pages/exhibits/index",
-        "pages/about/index",
-        "pages/visit/index",
-        "pages/visit/detail/index"
+        "pages/exhibits/detail/index",
+        "pages/guide/chat/index"
     ],
     "lazyCodeLoading": "requiredComponents",
     "usingComponents": {
@@ -18,7 +17,7 @@
     "window": {
         "backgroundColor": "#F6F6F6",
         "backgroundTextStyle": "light",
-        "navigationBarBackgroundColor": "#07c160",
+        "navigationBarBackgroundColor": "#D4A574",
         "navigationBarTitleText": "日月山导览",
         "navigationBarTextStyle": "white"
     },
@@ -32,6 +31,8 @@
         "getLocation"
     ],
     "tabBar": {
+        "color": "#999999",
+        "selectedColor": "#D4A574",
         "list": [
             {
                 "pagePath": "pages/guide/index",

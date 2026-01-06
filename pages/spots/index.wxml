@@ -1,21 +1,35 @@
 <view class="visit-list">
   <!-- 导览列表 -->
-  <view class="visit-item" wx:for="{{visitList}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+  <view class="visit-item" wx:for="{{spotsList}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
     <view class="visit-image">
       <image src="{{item.coverImage}}" mode="aspectFill" />
     </view>
     <view class="visit-info">
-      <view class="visit-title">{{item.title}}</view>
-      <view class="visit-desc">{{item.description}}</view>
-      <view class="visit-meta">
-        <text class="visit-duration">🎧 {{item.duration}}</text>
-        <text class="visit-category">{{item.category}}</text>
+      <view class="visit-title">
+        <text>{{item.name}}</text>
+        <view class="visit-meta">
+          <t-icon name="sound" size="28rpx" />
+          <view wx:if="{{item.duration}}">
+            {{item.duration}}s
+          </view>
+        </view>
       </view>
+      <view class="visit-desc">{{item.description}}</view>
     </view>
   </view>
   
+  <!-- 加载中提示 -->
+  <view class="loading-tip" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  
+  <!-- 没有更多数据提示 -->
+  <view class="no-more-tip" wx:if="{{!hasMore && spotsList.length > 0}}">
+    <text>— 已经到底了 —</text>
+  </view>
+  
   <!-- 空状态 -->
-  <view class="empty-state" wx:if="{{visitList.length === 0}}">
+  <view class="empty-state" wx:if="{{spotsList.length === 0 && !loading}}">
     <text>暂无导览内容</text>
   </view>
 </view>

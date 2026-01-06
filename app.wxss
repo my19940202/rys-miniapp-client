@@ -32,7 +32,7 @@ page {
 }
 
 .t-button {
-    --td-button-primary-bg-color: rgb(7, 193, 96);
+    --td-button-primary-bg-color: #D4A574;
     --td-button-primary-active-bg-color: #999;
 }
 
@@ -45,7 +45,7 @@ page {
 }
 
 .active {
-    background-color: rgba(7, 193, 96, 0.5);
+    background-color: #D4A574;
 }
 
 .flex-container .t-calendar-header__with-action {
