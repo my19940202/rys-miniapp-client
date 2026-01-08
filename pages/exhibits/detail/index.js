@@ -44,6 +44,7 @@ Page({
         const audioDuration = data.audio?.duration || 0;
         this.setData({
           exhibitDetail: {
+            code: data.code,
             _id: data._id,
             name: data.name,
             description: data.description,
@@ -53,6 +54,9 @@ Page({
           },
           swiperList: data.images || [],
           duration: audioDuration
+        });
+        wx.setNavigationBarTitle({
+          title: data.code + ' - ' + data.name
         });
 
         // 创建音频上下文
@@ -195,4 +199,3 @@ Page({
     };
   }
 });
-

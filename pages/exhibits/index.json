@@ -4,6 +4,8 @@
     "navigationBarTitleText": "展品导览",
     "enablePullDownRefresh": true,
     "usingComponents": {
-        "t-icon": "tdesign-miniprogram/icon/icon"
+        "t-icon": "tdesign-miniprogram/icon/icon",
+        "t-input": "tdesign-miniprogram/input/input",
+        "t-button": "tdesign-miniprogram/button/button"
     }
 }

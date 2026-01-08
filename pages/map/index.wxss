@@ -24,6 +24,8 @@ page {
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 0;
+  --td-tab-item-active-color: #333;
+  --td-tab-item-tag-active-bg: rgba(212, 165, 116, 0.5);
 }
 
 /* 地图样式 */

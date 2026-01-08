@@ -4,7 +4,8 @@ Page({
     page: 0,
     pageSize: 5,
     hasMore: true,
-    loading: false
+    loading: false,
+    searchKeyword: ''
   },
 
   async onLoad() {
@@ -19,13 +20,24 @@ Page({
     try {
       const me = getApp();
       await me.getInitPromise();
-      const { page, pageSize, exhibitsList } = this.data;
+      const { page, pageSize, exhibitsList, searchKeyword } = this.data;
+
+      // 构建查询条件
+      const query = {
+        isDelete: false,
+        status: 'active'
+      };
+      
+      // 如果有搜索关键词，使用正则表达式进行模糊匹配
+      if (searchKeyword && searchKeyword.trim()) {
+        query.name = me.globalData.db.RegExp({
+          regexp: searchKeyword.trim(),
+          options: 'i'
+        });
+      }
 
       const res = await me.globalData.db.collection('exhibits')
-        .where({
-          isDelete: false,
-          status: 'active'
-        })
+        .where(query)
         .field({
           name: true,
           images: true,
@@ -75,6 +87,25 @@ Page({
     });
     await this.fetchExhibitsList();
     wx.stopPullDownRefresh();
+  },
+
+  // 搜索输入框值变化
+  onSearchInputChange(e) {
+    this.setData({
+      searchKeyword: e.detail.value || ''
+    });
+  },
+
+  // 处理搜索按钮点击
+  async handleSearch() {
+    // 重置分页状态
+    this.setData({
+      exhibitsList: [],
+      page: 0,
+      hasMore: true
+    });
+    // 重新获取数据
+    await this.fetchExhibitsList();
   },
 
   // 跳转到详情页

@@ -55,6 +55,10 @@ Page({
           duration: audioDuration
         });
 
+        wx.setNavigationBarTitle({
+          title: data.name
+        });
+
         // 创建音频上下文
         if (data.audio?.url) {
           this.createAudioContext(data.audio.url);
