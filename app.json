@@ -1,7 +1,7 @@
 {
     "pages": [
-        "pages/guide/index",
         "pages/map/index",
+        "pages/guide/index",
         "pages/spots/index",
         "pages/spots/detail/index",
         "pages/exhibits/index",
@@ -34,12 +34,6 @@
         "color": "#999999",
         "selectedColor": "#D4A574",
         "list": [
-            {
-                "pagePath": "pages/guide/index",
-                "iconPath": "images/chat.png",
-                "selectedIconPath": "images/chat_active.png",
-                "text": "导览"
-            },
             {
                 "pagePath": "pages/map/index",
                 "iconPath": "images/map.png",

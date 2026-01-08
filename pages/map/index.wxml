@@ -23,26 +23,27 @@
     show-location
     bindmarkertap="onMarkerTap"
   >
-    <!-- 左下角控制按钮组 -->
-    <cover-view class="control-group left-bottom">
-      <cover-view class="control-btn" bindtap="handleZoom" data-action="in">
-        <cover-view class="btn-text">+</cover-view>
-      </cover-view>
-      <cover-view class="control-btn" bindtap="handleZoom" data-action="out">
-        <cover-view class="btn-text">-</cover-view>
-      </cover-view>
-      <cover-view class="control-btn" bindtap="handleLocation">
-        <cover-view class="btn-text">📍</cover-view>
-      </cover-view>
-    </cover-view>
-
-    <!-- 右上角路线按钮 -->
-    <cover-view class="control-group right-top">
-      <cover-view class="control-btn route-btn {{showRoute ? 'active' : ''}}" bindtap="toggleRoute">
-        <cover-view class="btn-text">{{showRoute ? '隐藏' : '路线'}}</cover-view>
-      </cover-view>
-    </cover-view>
   </map>
+
+  <!-- 左下角控制按钮组 -->
+  <view class="control-group right-bottom">
+    <view class="control-btn" bindtap="handleZoom" data-action="in">
+      <t-icon name="plus" size="40rpx" color="#333" />
+    </view>
+    <view class="control-btn" bindtap="handleZoom" data-action="out">
+      <t-icon name="minus" size="40rpx" color="#333" />
+    </view>
+    <view class="control-btn" bindtap="handleLocation">
+      <t-icon name="location" size="40rpx" color="#333" />
+    </view>
+  </view>
+
+  <!-- 右上角路线按钮 -->
+  <view class="control-group right-top">
+    <view class="control-btn route-btn {{showRoute ? 'active' : ''}}" bindtap="toggleRoute">
+      <view class="btn-text">{{showRoute ? '隐藏' : '路线'}}</view>
+    </view>
+  </view>
 
   <!-- 景点详情弹窗 -->
   <t-popup

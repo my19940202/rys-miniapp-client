@@ -23,7 +23,7 @@ page {
   z-index: 1000;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 8px 0;
+  padding: 0;
 }
 
 /* 地图样式 */
@@ -42,21 +42,22 @@ page {
   background-color: transparent;
 }
 
-.control-group.left-bottom {
-  left: 10px;
+.control-group.right-bottom {
+  right: 10px;
   bottom: 40px;
 }
 
 .control-group.right-top {
-  right: 20px;
-  top: 20px;
+  right: 10px;
+  top: 60px;
+  z-index: 1002;
 }
 
 /* 控制按钮样式 */
 .control-btn {
   width: 90rpx;
   height: 90rpx;
-  background: #ffffff;
+  background: rgba(212, 165, 116, 0.5);
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -86,7 +87,6 @@ page {
   width: 120rpx;
   padding: 0 20rpx;
   border-radius: 50rpx;
-  background: #D4A574;
 }
 
 .route-btn .btn-text {
