@@ -259,7 +259,7 @@
         </view>
         <view class="right_btns">
           <!-- 加号 -->
-          <image src="./imgs/set.svg" class="set" mode="widthFix" bind:tap="handleClickTools" />
+          <!-- <image src="./imgs/set.svg" class="set" mode="widthFix" bind:tap="handleClickTools" /> -->
           <!-- 发送按钮 -->
           <view wx:if="{{!!inputValue&&chatStatus===0}}" class="set" style="display: flex;justify-content: center;align-items: center;background-color: #436af4;border-radius: 50px;">
             <image src="./imgs/send.svg" class="send-set" mode="widthFix" bind:tap="handleSendMessage" style="transform-origin: 8px 8px;" />

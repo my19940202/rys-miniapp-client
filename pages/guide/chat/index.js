@@ -38,6 +38,10 @@ Page({
         } else {
             this.setData({ showAgent: true });
         }
+
+        wx.setNavigationBarTitle({
+            title: 'AI生成仅供参考'
+        });
     },
     
     // 轮询等待 agent-ui 组件初始化完成

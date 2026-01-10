@@ -35,6 +35,12 @@
         "selectedColor": "#D4A574",
         "list": [
             {
+                "pagePath": "pages/guide/index",
+                "iconPath": "images/chat.png",
+                "selectedIconPath": "images/chat_active.png",
+                "text": "导览"
+            },
+            {
                 "pagePath": "pages/map/index",
                 "iconPath": "images/map.png",
                 "selectedIconPath": "images/map_active.png",
