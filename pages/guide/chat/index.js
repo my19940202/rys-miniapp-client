@@ -1,3 +1,5 @@
+import { URL_PREFIX } from '../../../constant/index';
+
 Page({
     data: {
         showAgent: false,
@@ -20,7 +22,7 @@ Page({
         return {
             title: '日月山AI导览，智能问答带你游览~',
             path: '/pages/guide/index',
-            imageUrl: 'https://636c-cloud1-9gzmqwpsa8336a66-1393371278.tcb.qcloud.la/images/ai-bot/share-guide-new.png'
+            imageUrl: URL_PREFIX + '/images/ai-bot/share-guide-new.png'
         }
     },
     async onLoad(options) {

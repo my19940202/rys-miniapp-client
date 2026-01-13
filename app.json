@@ -1,7 +1,7 @@
 {
     "pages": [
-        "pages/map/index",
         "pages/guide/index",
+        "pages/map/index",
         "pages/spots/index",
         "pages/spots/detail/index",
         "pages/exhibits/index",

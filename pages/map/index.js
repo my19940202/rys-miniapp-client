@@ -1,3 +1,5 @@
+import { URL_PREFIX } from '../../constant/index';
+
 Page({
   data: {
     // 地图配置
@@ -6,177 +8,178 @@ Page({
       longitude: 101.095139
     },
     scale: 17,
-    
-    // 分类配置
+    markers: [],
+    boundary: null, // 景区边界范围 {minLat, maxLat, minLng, maxLng}
+     // 分类配置
     categories: [
-    //   { value: 'all', label: '全部', emoji: '🗺️' },
       { value: 'mountain', label: '山体', emoji: '⛰️' },
       { value: 'building', label: '古建筑', emoji: '🏛️' },
       { value: 'toilet', label: '厕所', emoji: '🚻' },
       { value: 'service', label: '服务点', emoji: '🏪' }
     ],
     currentTab: 'mountain',
-    
-    // 所有景点数据
-    allMarkers: [
-      // 山体景点
-      { id: 1, type: 'mountain', latitude: 36.442053, longitude: 101.095139, 
-        title: '日月山主峰', description: '日月山位于青海省湟源县西南，是青海农业区与牧业区的分界线，海拔3520米。', 
-        images: [], emoji: '⛰️' },
-      { id: 2, type: 'mountain', latitude: 36.443200, longitude: 101.097000, 
-        title: '日亭', description: '日亭建于山顶，象征着太阳升起的地方，是观赏日出的绝佳位置。', 
-        images: [], emoji: '⛰️' },
-      { id: 3, type: 'mountain', latitude: 36.441000, longitude: 101.093000, 
-        title: '月亭', description: '月亭与日亭遥相呼应，传说文成公主在此摔碎宝镜，从此山分日月。', 
-        images: [], emoji: '⛰️' },
-      
-      // 古建筑
-      { id: 4, type: 'building', latitude: 36.442500, longitude: 101.095500, 
-        title: '文成公主纪念馆', description: '纪念馆展示了文成公主进藏的历史故事和珍贵文物，是了解藏汉文化交流的重要场所。', 
-        images: [], emoji: '🏛️' },
-      { id: 5, type: 'building', latitude: 36.441800, longitude: 101.094500, 
-        title: '日月山牌坊', description: '古老的石牌坊，见证了千年来往来商旅的历史，是茶马古道的重要标志。', 
-        images: [], emoji: '🏛️' },
-      { id: 6, type: 'mountain', latitude: 36.442800, longitude: 101.096200, 
-        title: '藏经楼', description: '保存有珍贵的藏文经卷和历史文献，是研究藏传佛教的重要资料库。', 
-        images: [], emoji: '🏛️' },
-      
-      // 厕所
-      { id: 7, type: 'toilet', latitude: 36.442300, longitude: 101.095800, 
-        title: '游客中心厕所', description: '位于游客中心旁，设施齐全，保持清洁。', 
-        images: [], emoji: '🚻' },
-      { id: 8, type: 'toilet', latitude: 36.441500, longitude: 101.093500, 
-        title: '月亭景区厕所', description: '月亭附近公共厕所，方便游客使用。', 
-        images: [], emoji: '🚻' },
-      { id: 9, type: 'toilet', latitude: 36.443500, longitude: 101.097300, 
-        title: '日亭景区厕所', description: '日亭区域公共厕所，设施完善。', 
-        images: [], emoji: '🚻' },
-      
-      // 服务点
-      { id: 10, type: 'service', latitude: 36.442200, longitude: 101.095300, 
-        title: '游客服务中心', description: '提供咨询、购票、寄存、租赁等综合服务。营业时间：08:00-18:00', 
-        images: [], emoji: '🏪' },
-      { id: 11, type: 'service', latitude: 36.442600, longitude: 101.096500, 
-        title: '特产商店', description: '售卖青海特色工艺品、牦牛肉干、青稞酒等地方特产。', 
-        images: [], emoji: '🏪' },
-      { id: 12, type: 'service', latitude: 36.441200, longitude: 101.093800, 
-        title: '休息驿站', description: '提供休息座椅、热水供应和简单餐饮服务。', 
-        images: [], emoji: '🏪' },
-      { id: 13, type: 'service', latitude: 36.443000, longitude: 101.097500, 
-        title: '观景台小卖部', description: '提供饮料、零食和应急药品，方便游客补给。', 
-        images: [], emoji: '🏪' }
-    ],
-    
-    // 当前显示的markers
-    markers: [],
-    
-    // 推荐路线（景点ID序列）
-    recommendRoute: [10, 1, 4, 2, 3, 5, 6],
-    
-    // 路线polyline数据
     polylines: [],
     showRoute: false,
-    
-    // 弹窗相关
     showPopup: false,
     currentSpot: null
   },
 
-  onLoad() {
+  async onLoad() {
     this.mapContext = wx.createMapContext('scenic-map');
-    // 初始化显示当前tab对应的markers
-    this.filterMarkers(this.data.currentTab);
+    this.isAdjustingMap = false; // 防止递归调用标志（使用实例属性）
+    
+    // 初始化时先设置边界限制（基于初始 mapCenter）
+    const initialIncludePoints = this.calculateBoundaryPoints(this.data.mapCenter);
+    const initialBoundary = this.calculateBoundary(this.data.mapCenter);
+    this.setData({ 
+      includePoints: initialIncludePoints,
+      boundary: initialBoundary
+    });
+    
+    // 等待全局云开发初始化
+    const app = getApp();
+    if (app.getInitPromise) {
+      await app.getInitPromise();
+    }
+    const db = app.globalData.db;
+    // 查询景点数据
+    db.collection('scenic_spots').get().then(res => {
+      const spots = res.data || [];
+      // 1x1 透明 PNG data URI，避免显示默认红点，仅显示 callout
+      const TRANSPARENT_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+      // 组装markers（使用透明 iconPath + callout 文本）
+      const markers = spots.map((spot, idx) => ({
+        id: spot._id || idx,
+        latitude: spot.location.latitude,
+        longitude: spot.location.longitude,
+        title: spot.name,
+        iconPath: TRANSPARENT_PNG,
+        width: 1,
+        height: 1,
+        callout: {
+          content: spot.name,
+          fontSize: 14,
+          color: '#222222',
+          bgColor: '#ffffff',
+          borderRadius: 12,
+          padding: 8,
+          textAlign: 'center',
+          display: 'ALWAYS'
+        }
+      }));
+      // 默认以第一个点为中心
+      let mapCenter = this.data.mapCenter;
+      if (spots.length > 0) {
+        mapCenter = {
+          latitude: spots[0].location.latitude,
+          longitude: spots[0].location.longitude
+        };
+      }
+      
+      // 以 mapCenter 为中心计算景区边界点，限制地图显示区域
+      const includePoints = this.calculateBoundaryPoints(mapCenter);
+      const boundary = this.calculateBoundary(mapCenter);
+      
+      this.setData({ 
+        markers, 
+        allSpots: spots, 
+        mapCenter, 
+        includePoints,
+        boundary
+      });
+    });
   },
 
-  // Tab切换事件
+  // 以 mapCenter 为中心计算景区边界点，用于限制地图显示区域
+  calculateBoundaryPoints(mapCenter) {
+    if (!mapCenter || !mapCenter.latitude || !mapCenter.longitude) {
+      return [];
+    }
+    
+    // 设置景区范围半径（约0.01度，约1公里），可根据实际景区大小调整
+    const radius = 0.01;
+    
+    // 以中心点为中心，向四周扩展
+    const minLat = mapCenter.latitude - radius;
+    const maxLat = mapCenter.latitude + radius;
+    const minLng = mapCenter.longitude - radius;
+    const maxLng = mapCenter.longitude + radius;
+    
+    // 返回矩形区域的两个对角点（西南角和东北角）
+    return [
+      { latitude: minLat, longitude: minLng }, // 西南角
+      { latitude: maxLat, longitude: maxLng }  // 东北角
+    ];
+  },
+
+  // 计算景区边界范围对象，用于检查是否超出边界
+  calculateBoundary(mapCenter) {
+    if (!mapCenter || !mapCenter.latitude || !mapCenter.longitude) {
+      return null;
+    }
+    
+    // 设置景区范围半径（约0.01度，约1公里），可根据实际景区大小调整
+    const radius = 0.01;
+    
+    return {
+      minLat: mapCenter.latitude - radius,
+      maxLat: mapCenter.latitude + radius,
+      minLng: mapCenter.longitude - radius,
+      maxLng: mapCenter.longitude + radius
+    };
+  },
+
+  // 检查坐标是否在边界范围内
+  isWithinBoundary(latitude, longitude) {
+    const { boundary } = this.data;
+    if (!boundary) return true;
+    
+    return latitude >= boundary.minLat && 
+           latitude <= boundary.maxLat &&
+           longitude >= boundary.minLng && 
+           longitude <= boundary.maxLng;
+  },
+
+  // 地图区域变化事件（用户拖动地图时触发）
+  onRegionChange(e) {
+    if (e.detail.type !== 'end' || this.isAdjustingMap) {
+      return;
+    }
+    
+    const { centerLocation } = e.detail;
+    if (!centerLocation) {
+      return;
+    }
+    
+    const { latitude, longitude } = centerLocation;
+    
+    // 检查是否超出边界, 超出边界就移回中心点
+    if (!this.isWithinBoundary(latitude, longitude)) {
+      this.isAdjustingMap = true;
+      this.mapContext.moveToLocation({
+        latitude: this.data.mapCenter.latitude,
+        longitude: this.data.mapCenter.longitude,
+        complete: () => {
+          setTimeout(() => {
+            this.isAdjustingMap = false;
+          }, 300);
+        }
+      });
+    }
+  },
+
+   // Tab切换事件
   onTabChange(e) {
     const tab = e.detail.value;
     this.setData({ currentTab: tab });
     this.filterMarkers(tab);
   },
 
-  // 根据分类过滤markers
-  filterMarkers(type) {
-    const { allMarkers } = this.data;
-    let filtered = type === 'all' ? allMarkers : allMarkers.filter(m => m.type === type);
-    
-    // 山体景点使用的图片URL
-    const mountainIconUrl = 'https://636c-cloud1-5g5eyjtze161c202-1319072486.tcb.qcloud.la/moutain.png';
-    const hadaIconUrl = 'https://636c-cloud1-5g5eyjtze161c202-1319072486.tcb.qcloud.la/hada.png';
-    
-    // 转换为地图markers格式
-    const markers = filtered.map(spot => {
-      // 如果是山体景点，使用图片作为图标
-      if (spot.type === 'mountain' ) {
-        return {
-          id: spot.id,
-          latitude: spot.latitude,
-          longitude: spot.longitude,
-          title: spot.title,
-          iconPath: spot.id === 6 ? hadaIconUrl : mountainIconUrl,
-          width: spot.id === 6 ? 40 : 80,
-          height: spot.id === 6 ? 40 : 80,
-          callout: {
-            content: spot.title,
-            fontSize: 14,
-            color: '#333',
-            bgColor: '#ffffff',
-            borderRadius: 4,
-            padding: 8,
-            display: 'BYCLICK'
-          }
-        };
-      }
-      
-      // // 如果是古建筑且id为6，使用hada图片作为图标
-      // if (spot.type === 'building' && spot.id === 6) {
-      //   return {
-      //     id: spot.id,
-      //     latitude: spot.latitude,
-      //     longitude: spot.longitude,
-      //     title: spot.title,
-      //     iconPath: hadaIconUrl,
-      //     width: 80,
-      //     height: 80,
-      //     callout: {
-      //       content: spot.title,
-      //       fontSize: 14,
-      //       color: '#333',
-      //       bgColor: '#ffffff',
-      //       borderRadius: 4,
-      //       padding: 8,
-      //       display: 'BYCLICK'
-      //     }
-      //   };
-      // }
-      
-      // 其他类型使用emoji标签
-      return {
-        id: spot.id,
-        latitude: spot.latitude,
-        longitude: spot.longitude,
-        title: spot.title,
-        width: 20,
-        height: 28,
-        label: {
-          content: spot.emoji,
-          fontSize: 24,
-          color: '#333',
-          bgColor: '#ffffff',
-          borderRadius: 20,
-          padding: 8,
-          textAlign: 'center'
-        }
-      };
-    });
-    
-    this.setData({ markers });
-  },
-
   // 点击marker
   onMarkerTap(e) {
     const markerId = e.detail.markerId;
-    const spot = this.data.allMarkers.find(m => m.id === markerId);
+    const spot = (this.data.allSpots || [])
+        .find(m => (m._id || m.id) === markerId || m.id === markerId);
     if (spot) {
       this.setData({
         currentSpot: spot,
@@ -225,18 +228,19 @@ Page({
 
   // 切换路线显示
   toggleRoute() {
-    const { showRoute, recommendRoute, allMarkers } = this.data;
-    
+    const { showRoute, allSpots } = this.data;
     if (!showRoute) {
-      // 生成路线数据
-      const points = recommendRoute.map(id => {
-        const spot = allMarkers.find(m => m.id === id);
-        return {
-          latitude: spot.latitude,
-          longitude: spot.longitude
-        };
-      });
-      
+      const spots = allSpots || [];
+      if (spots.length === 0) {
+        wx.showToast({ title: '暂无路线数据', icon: 'none' });
+        return;
+      }
+      // 使用所有景点的顺序生成路线点
+      const points = spots.map(s => ({
+        latitude: s.location.latitude,
+        longitude: s.location.longitude
+      }));
+
       const polylines = [{
         points: points,
         color: '#FF6B6B',
@@ -245,27 +249,12 @@ Page({
         borderColor: '#ffffff',
         borderWidth: 2
       }];
-      
-      this.setData({ 
-        polylines,
-        showRoute: true 
-      });
-      
-      wx.showToast({
-        title: '已显示推荐路线',
-        icon: 'success'
-      });
+
+      this.setData({ polylines, showRoute: true });
+      wx.showToast({ title: '已显示路线', icon: 'success' });
     } else {
-      // 隐藏路线
-      this.setData({ 
-        polylines: [],
-        showRoute: false 
-      });
-      
-      wx.showToast({
-        title: '已隐藏路线',
-        icon: 'none'
-      });
+      this.setData({ polylines: [], showRoute: false });
+      wx.showToast({ title: '已隐藏路线', icon: 'none' });
     }
   },
 
@@ -282,7 +271,7 @@ Page({
     return {
       title: '日月山景区导览',
       path: '/pages/map/index',
-      imageUrl: '/images/site.png' // 分享卡片的图片
+      imageUrl: URL_PREFIX + '/images/ai-bot/share-guide-new.png'
     }
   }
 })

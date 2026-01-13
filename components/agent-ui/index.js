@@ -340,7 +340,6 @@ Component({
             longPressTriggered: false,
           });
         }
-        // console.log('this.data.sendStatus', this.data.sendStatus)
       });
       recorderManager.onError((err) => {
         console.log("recorder err", err);
@@ -492,7 +491,6 @@ Component({
             resolve(res);
           },
           fail(e) {
-            console.log("conversation list e", e);
             reject(e);
           },
           complete: () => {

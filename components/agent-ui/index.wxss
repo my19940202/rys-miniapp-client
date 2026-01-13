@@ -360,7 +360,7 @@
 
 .system {
   margin-left: 24rpx;
-  margin-right: 24rpx;
+  margin-right: 42rpx;
   border-radius: 12rpx;
   margin-top: 12px;
   padding-bottom: 16px;

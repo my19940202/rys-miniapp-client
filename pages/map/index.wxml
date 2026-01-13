@@ -22,6 +22,7 @@
     polyline="{{polylines}}"
     show-location
     bindmarkertap="onMarkerTap"
+    bindregionchange="onRegionChange"
   >
   </map>
 
