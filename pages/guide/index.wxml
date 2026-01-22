@@ -38,16 +38,25 @@
     overlay-props="{{ {style: 'background: #FFF5E6'} }}"
 >
     <view class="video-popup-content" bindtap="skipVideo">
-        <video
-            id="guideVideo"
-            src="{{videoSrc}}"
-            autoplay
-            show-center-play-btn="{{false}}"
-            controls="{{false}}"
-            object-fit="contain"
-            bindended="onVideoEnded"
-            binderror="onVideoError"
-        />
+        <view class="video-wrapper">
+            <video
+                id="guideVideo"
+                src="{{videoSrc}}"
+                autoplay
+                show-center-play-btn="{{false}}"
+                controls="{{false}}"
+                object-fit="contain"
+                bindended="onVideoEnded"
+                binderror="onVideoError"
+                bindcanplay="onVideoCanPlay"
+                bindloadedmetadata="onVideoLoadedMeta"
+                bindplay="onVideoPlay"
+                style="opacity: {{videoLoading ? 0 : 1}};"
+            />
+            <view class="loading-wrapper" wx:if="{{videoLoading}}">
+                <t-loading theme="spinner" size="48rpx" text="加载中..." />
+            </view>
+        </view>
         <view class="skip-btn" bindtap="skipVideo">
             <text>跳过</text> <t-icon name="chevron-right-circle" size="48rpx" />
         </view>

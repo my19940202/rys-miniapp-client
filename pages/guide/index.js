@@ -4,6 +4,7 @@ Page({
     data: {
         showGuideVideo: false,  // 控制弹窗显示
         videoSrc: '',  // 随机视频源
+        videoLoading: true, // 视频加载状态
         questions: [
             { icon: '📖', text: '为我讲个日月山的故事' },
             { icon: '✨', text: '去哪玩？日月山景点必打卡攻略' },
@@ -29,8 +30,9 @@ Page({
         }
     },
     onLoad() {
+        // 页面载入后 t-popup 马上显示，先展示 loading
+        this.setData({ showGuideVideo: true, videoLoading: true });
         this.initRandomVideo();
-        this.checkAndShowGuideVideo();
     },
 
     // 随机选择视频
@@ -43,16 +45,32 @@ Page({
         ];
         const randomIndex = Math.floor(Math.random() * videos.length);
         const videoPath = `cloud://cloud1-9gzmqwpsa8336a66.636c-cloud1-9gzmqwpsa8336a66-1393371278/video/guide/${videos[randomIndex]}`;
-        this.setData({ videoSrc: videoPath });
+        this.setData({ videoSrc: videoPath, videoLoading: true });
     },
 
-    // 检查是否需要显示引导视频（首次访问）
-    checkAndShowGuideVideo() {
-        // const hasWatched = wx.getStorageSync('guide_video_watched');
-        // if (!hasWatched) {
-            // this.setData({ showGuideVideo: true });
-        // }
-        this.setData({ showGuideVideo: true });
+    // 视频可以播放时（加载完成）
+    onVideoCanPlay() {
+        this.finishVideoLoading();
+    },
+
+    // 元数据加载完成（比 canplay 更常触发）
+    onVideoLoadedMeta() {
+        this.finishVideoLoading();
+    },
+
+    // 开始播放（最可靠的时机）
+    onVideoPlay() {
+        this.finishVideoLoading();
+    },
+
+    // 统一收口：隐藏 loading，并兜底触发播放
+    finishVideoLoading() {
+        if (this.data.videoLoading) {
+            this.setData({ videoLoading: false });
+        }
+        // 确保开始播放（autoplay 通常已足够，这里兜底）
+        const ctx = wx.createVideoContext('guideVideo', this);
+        ctx.play();
     },
 
     // 视频播放结束
@@ -73,7 +91,7 @@ Page({
 
     // 关闭引导视频弹窗
     closeGuideVideo() {
-        this.setData({ showGuideVideo: false });
+        this.setData({ showGuideVideo: false, videoLoading: true });
         // wx.setStorageSync('guide_video_watched', true);
     }
 })
