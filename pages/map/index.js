@@ -9,9 +9,10 @@ Page({
     },
     scale: 17,
     markers: [],
-    boundary: null, // 景区边界范围 {minLat, maxLat, minLng, maxLng}
+    includePoints: [], // 地图显示区域限制点
      // 分类配置
     categories: [
+    //   { value: 'all', label: '全部', emoji: '🗺️' },
       { value: 'mountain', label: '山体', emoji: '⛰️' },
       { value: 'building', label: '古建筑', emoji: '🏛️' },
       { value: 'toilet', label: '厕所', emoji: '🚻' },
@@ -26,15 +27,10 @@ Page({
 
   async onLoad() {
     this.mapContext = wx.createMapContext('scenic-map');
-    this.isAdjustingMap = false; // 防止递归调用标志（使用实例属性）
     
     // 初始化时先设置边界限制（基于初始 mapCenter）
     const initialIncludePoints = this.calculateBoundaryPoints(this.data.mapCenter);
-    const initialBoundary = this.calculateBoundary(this.data.mapCenter);
-    this.setData({ 
-      includePoints: initialIncludePoints,
-      boundary: initialBoundary
-    });
+    this.setData({ includePoints: initialIncludePoints });
     
     // 等待全局云开发初始化
     const app = getApp();
@@ -58,11 +54,11 @@ Page({
         height: 1,
         callout: {
           content: spot.name,
-          fontSize: 14,
+          fontSize: 16,
           color: '#222222',
           bgColor: '#ffffff',
           borderRadius: 12,
-          padding: 8,
+          padding: 10,
           textAlign: 'center',
           display: 'ALWAYS'
         }
@@ -78,15 +74,8 @@ Page({
       
       // 以 mapCenter 为中心计算景区边界点，限制地图显示区域
       const includePoints = this.calculateBoundaryPoints(mapCenter);
-      const boundary = this.calculateBoundary(mapCenter);
       
-      this.setData({ 
-        markers, 
-        allSpots: spots, 
-        mapCenter, 
-        includePoints,
-        boundary
-      });
+      this.setData({ markers, allSpots: spots, mapCenter, includePoints });
     });
   },
 
@@ -110,62 +99,6 @@ Page({
       { latitude: minLat, longitude: minLng }, // 西南角
       { latitude: maxLat, longitude: maxLng }  // 东北角
     ];
-  },
-
-  // 计算景区边界范围对象，用于检查是否超出边界
-  calculateBoundary(mapCenter) {
-    if (!mapCenter || !mapCenter.latitude || !mapCenter.longitude) {
-      return null;
-    }
-    
-    // 设置景区范围半径（约0.01度，约1公里），可根据实际景区大小调整
-    const radius = 0.01;
-    
-    return {
-      minLat: mapCenter.latitude - radius,
-      maxLat: mapCenter.latitude + radius,
-      minLng: mapCenter.longitude - radius,
-      maxLng: mapCenter.longitude + radius
-    };
-  },
-
-  // 检查坐标是否在边界范围内
-  isWithinBoundary(latitude, longitude) {
-    const { boundary } = this.data;
-    if (!boundary) return true;
-    
-    return latitude >= boundary.minLat && 
-           latitude <= boundary.maxLat &&
-           longitude >= boundary.minLng && 
-           longitude <= boundary.maxLng;
-  },
-
-  // 地图区域变化事件（用户拖动地图时触发）
-  onRegionChange(e) {
-    if (e.detail.type !== 'end' || this.isAdjustingMap) {
-      return;
-    }
-    
-    const { centerLocation } = e.detail;
-    if (!centerLocation) {
-      return;
-    }
-    
-    const { latitude, longitude } = centerLocation;
-    
-    // 检查是否超出边界, 超出边界就移回中心点
-    if (!this.isWithinBoundary(latitude, longitude)) {
-      this.isAdjustingMap = true;
-      this.mapContext.moveToLocation({
-        latitude: this.data.mapCenter.latitude,
-        longitude: this.data.mapCenter.longitude,
-        complete: () => {
-          setTimeout(() => {
-            this.isAdjustingMap = false;
-          }, 300);
-        }
-      });
-    }
   },
 
    // Tab切换事件

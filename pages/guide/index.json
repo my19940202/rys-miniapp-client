@@ -3,6 +3,7 @@
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "AI导览",
     "usingComponents": {
-        "t-icon": "tdesign-miniprogram/icon/icon"
+        "t-icon": "tdesign-miniprogram/icon/icon",
+        "t-popup": "tdesign-miniprogram/popup/popup"
     }
 }
