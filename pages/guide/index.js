@@ -43,9 +43,19 @@ Page({
             'guide-tiger.mp4',
             'guide-def.mp4'
         ];
+        const icons = [
+            'icon-leopard.jpg',
+            'icon-fox.jpg',
+            'icon-tiger.jpg',
+            'icon-def.jpg'
+        ];
         const randomIndex = Math.floor(Math.random() * videos.length);
         const videoPath = `cloud://cloud1-9gzmqwpsa8336a66.636c-cloud1-9gzmqwpsa8336a66-1393371278/video/guide/${videos[randomIndex]}`;
-        this.setData({ videoSrc: videoPath, videoLoading: true });
+        this.setData({
+            videoSrc: videoPath,
+            iconSrc: `cloud://cloud1-9gzmqwpsa8336a66.636c-cloud1-9gzmqwpsa8336a66-1393371278/images/guide/${icons[randomIndex]}`,
+            videoLoading: true
+        });
     },
 
     // 视频可以播放时（加载完成）

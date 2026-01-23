@@ -1,7 +1,7 @@
 <view class="container">
     <!-- 头像区域 -->
     <view class="avatar-section">
-        <image class="avatar" src="https://636c-cloud1-9gzmqwpsa8336a66-1393371278.tcb.qcloud.la/images/ai-bot/ai-avatar.png" mode="aspectFill"></image>
+        <image class="avatar" mode="widthFix" src="{{iconSrc}}" />
     </view>
 
     <!-- 标题 -->
