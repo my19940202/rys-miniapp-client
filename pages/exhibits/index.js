@@ -42,7 +42,8 @@ Page({
           name: true,
           images: true,
           description: true,
-          audio: true
+          audio: true,
+          code: true
         })
         .skip(page * pageSize)
         .limit(pageSize)
@@ -51,6 +52,7 @@ Page({
       const list = res.data.map(item => ({
         _id: item._id,
         name: item.name,
+        code: item.code,
         coverImage: item.images?.[0] || '',
         description: item.description,
         audioUrl: item.audio?.url || '',

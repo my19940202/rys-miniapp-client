@@ -54,7 +54,14 @@ page {
   margin-bottom: 16rpx;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+}
+
+.visit-code-name {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10rpx;
+  flex: 1;
 }
 
 .visit-desc {

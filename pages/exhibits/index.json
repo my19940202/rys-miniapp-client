@@ -6,6 +6,7 @@
     "usingComponents": {
         "t-icon": "tdesign-miniprogram/icon/icon",
         "t-input": "tdesign-miniprogram/input/input",
-        "t-button": "tdesign-miniprogram/button/button"
+        "t-button": "tdesign-miniprogram/button/button",
+        "t-tag": "tdesign-miniprogram/tag/tag"
     }
 }

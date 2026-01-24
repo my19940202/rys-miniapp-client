@@ -20,7 +20,14 @@
     </view>
     <view class="visit-info">
       <view class="visit-title">
-        <text>{{item.name}}</text>
+        <view class="visit-code-name">
+          <view>
+            {{item.name}}
+          </view>
+          <t-tag variant="outline" shape="mark">
+            {{item.code}}
+          </t-tag>
+        </view>
         <view class="visit-meta">
           <t-icon name="sound" size="28rpx" />
           <view wx:if="{{item.duration}}">
