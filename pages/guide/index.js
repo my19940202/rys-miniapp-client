@@ -40,14 +40,12 @@ Page({
         const videos = [
             'guide-leopard.mp4',
             'guide-fox.mp4',
-            'guide-tiger.mp4',
-            'guide-def.mp4'
+            'guide-tiger.mp4'
         ];
         const icons = [
             'icon-leopard.jpg',
             'icon-fox.jpg',
-            'icon-tiger.jpg',
-            'icon-def.jpg'
+            'icon-tiger.jpg'
         ];
         const randomIndex = Math.floor(Math.random() * videos.length);
         const videoPath = `cloud://cloud1-9gzmqwpsa8336a66.636c-cloud1-9gzmqwpsa8336a66-1393371278/video/guide/${videos[randomIndex]}`;
