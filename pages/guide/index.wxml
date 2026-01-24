@@ -8,7 +8,7 @@
     <view class="title">Hello！</view>
 
     <!-- 欢迎语 -->
-    <view class="welcome-text">Hello！我是AI导游小月，点击与我对话吧~</view>
+    <view class="welcome-text">Hello！我是AI导游，点击与我对话吧~</view>
 
     <!-- 问题列表 -->
     <view class="question-list">
@@ -35,7 +35,7 @@
 <t-popup
     visible="{{showGuideVideo}}"
     placement="center"
-    overlay-props="{{ {style: 'background: #FFF5E6'} }}"
+    overlay-props="{{ {style: 'background: #FDFDFD'} }}"
 >
     <view class="video-popup-content" bindtap="skipVideo">
         <view class="video-wrapper">
@@ -61,7 +61,7 @@
             <text>跳过</text> <t-icon name="chevron-right-circle" size="48rpx" />
         </view>
         <view class="bottom-guide" >
-            Hello！我是AI导游鼠鼠，快来与我对话吧~
+            Hello！我是AI导游，快来与我对话吧~
         </view>
     </view>
 </t-popup>

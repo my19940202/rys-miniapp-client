@@ -24,7 +24,7 @@ Page({
       const res = await me.globalData.db.collection('scenic_spots')
         .where({
           isDelete: false,
-          status: 1
+          status: 'active'
         })
         .field({
           name: true,
