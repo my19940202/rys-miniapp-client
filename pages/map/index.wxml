@@ -22,7 +22,7 @@
     polyline="{{polylines}}"
     show-location
     bindmarkertap="onMarkerTap"
-    bindregionchange="onRegionChange"
+    bindcallouttap="onMarkerTap"
   >
   </map>
 
@@ -55,37 +55,33 @@
   >
     <view class="popup-content" wx:if="{{currentSpot}}">
       <view class="popup-header">
-        <view class="spot-emoji">{{currentSpot.emoji}}</view>
-        <view class="spot-title">{{currentSpot.title}}</view>
+        <view class="spot-title">{{currentSpot.name}}</view>
       </view>
       
       <!-- 景点图片（如果有） -->
       <view class="spot-images" wx:if="{{currentSpot.images && currentSpot.images.length > 0}}">
-        <image 
-          wx:for="{{currentSpot.images}}" 
-          wx:key="index"
-          src="{{item}}" 
+        <image
+          src="{{currentSpot.images[0]}}"
           class="spot-image"
           mode="aspectFill"
         />
       </view>
       
       <!-- 景点描述 -->
-      <view class="spot-description">
-        {{currentSpot.description}}
+      <view class="spot-description text-ellipsis" wx:if="{{currentSpot.description}}">
+        <text>{{currentSpot.description}}</text>
       </view>
       
       <!-- 语音讲解按钮 -->
-      <view class="audio-section">
-        <t-button theme="primary" size="medium" bindtap="playAudio" block>
-          🔊 语音讲解
-        </t-button>
+      <view class="audio-section" wx:if="{{currentSpot.audio && currentSpot.audio.url}}">
+        <view class="audio-player" bindtap="toggleAudio">
+          <t-icon name="{{isAudioPlaying ? 'pause-circle-stroke' : 'sound'}}" size="44rpx" />
+          <view class="audio-duration">{{audioTimeDisplay}}</view>
+        </view>
       </view>
       
-      <!-- 关闭按钮 -->
-      <view class="close-btn" bindtap="closePopup">
-        <t-button theme="light" size="small" block>关闭</t-button>
-      </view>
+      <!-- 查看详情按钮 -->
+      <t-button bindtap="goToDetail" theme="primary" block>查看详情</t-button>
     </view>
   </t-popup>
 </view>

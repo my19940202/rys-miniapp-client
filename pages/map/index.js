@@ -12,40 +12,61 @@ Page({
     includePoints: [], // 地图显示区域限制点
      // 分类配置
     categories: [
-    //   { value: 'all', label: '全部', emoji: '🗺️' },
-      { value: 'mountain', label: '山体', emoji: '⛰️' },
-      { value: 'building', label: '古建筑', emoji: '🏛️' },
-      { value: 'toilet', label: '厕所', emoji: '🚻' },
-      { value: 'service', label: '服务点', emoji: '🏪' }
+      { value: '历史人文', label: '历史人文', emoji: '📜' },
+      { value: '自然风光', label: '自然风光', emoji: '⛰️' },
+      { value: '建筑地标', label: '建筑地标', emoji: '🏛️' }
     ],
-    currentTab: 'mountain',
+    currentTab: '历史人文',
     polylines: [],
     showRoute: false,
     showPopup: false,
-    currentSpot: null
+    currentSpot: null,
+    isAudioPlaying: false,
+    audioTimeDisplay: '0:00'
   },
 
-  async onLoad() {
-    this.mapContext = wx.createMapContext('scenic-map');
-    
-    // 初始化时先设置边界限制（基于初始 mapCenter）
-    const initialIncludePoints = this.calculateBoundaryPoints(this.data.mapCenter);
-    this.setData({ includePoints: initialIncludePoints });
-    
-    // 等待全局云开发初始化
-    const app = getApp();
-    if (app.getInitPromise) {
-      await app.getInitPromise();
+  async fetchSpotsByTab(tab) {
+    // 切换/重新查询前统一重置UI，避免数据与展示不一致
+    if (this.innerAudioContext) {
+      this.innerAudioContext.stop();
     }
-    const db = app.globalData.db;
-    // 查询景点数据
-    db.collection('scenic_spots').get().then(res => {
-      const spots = res.data || [];
-      // 1x1 透明 PNG data URI，避免显示默认红点，仅显示 callout
+    this.setData({
+      showPopup: false,
+      currentSpot: null,
+      isAudioPlaying: false,
+      audioTimeDisplay: '0:00',
+      showRoute: false,
+      polylines: []
+    });
+
+    try {
+      const app = getApp();
+      if (app.getInitPromise) {
+        await app.getInitPromise();
+      }
+      const db = app.globalData.db;
+      const res = await db.collection('scenic_spots')
+        .where({
+          isDelete: false,
+          status: 'active',
+          tags: tab
+        })
+        .field({
+          name: true,
+          location: true,
+          images: true,
+          description: true,
+          audio: true,
+          tags: true
+        })
+        .get();
+
+      const spots = (res?.data || []).filter(s => s?.location?.latitude && s?.location?.longitude);
+
+      // 1x1 透明 PNG 避免显示默认红点，仅显示 callout
       const TRANSPARENT_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
-      // 组装markers（使用透明 iconPath + callout 文本）
       const markers = spots.map((spot, idx) => ({
-        id: spot._id || idx,
+        id: idx,
         latitude: spot.location.latitude,
         longitude: spot.location.longitude,
         title: spot.name,
@@ -63,6 +84,7 @@ Page({
           display: 'ALWAYS'
         }
       }));
+
       // 默认以第一个点为中心
       let mapCenter = this.data.mapCenter;
       if (spots.length > 0) {
@@ -71,12 +93,39 @@ Page({
           longitude: spots[0].location.longitude
         };
       }
-      
-      // 以 mapCenter 为中心计算景区边界点，限制地图显示区域
+
       const includePoints = this.calculateBoundaryPoints(mapCenter);
-      
+
       this.setData({ markers, allSpots: spots, mapCenter, includePoints });
+    } catch (err) {
+      console.error('获取景点数据失败:', err);
+      this.setData({ markers: [], allSpots: [] });
+      wx.showToast({ title: '加载失败', icon: 'none' });
+    }
+  },
+
+  async onLoad() {
+    this.mapContext = wx.createMapContext('scenic-map');
+    this.innerAudioContext = wx.createInnerAudioContext();
+    this.innerAudioContext.onEnded(() => {
+      this.setData({ isAudioPlaying: false });
     });
+    this.innerAudioContext.onStop(() => {
+      this.setData({ isAudioPlaying: false });
+    });
+    this.innerAudioContext.onPause(() => {
+      this.setData({ isAudioPlaying: false });
+    });
+    this.innerAudioContext.onError((err) => {
+      console.warn('audio error:', err);
+      this.setData({ isAudioPlaying: false });
+    });
+    
+    // 初始化时先设置边界限制（基于初始 mapCenter）
+    const initialIncludePoints = this.calculateBoundaryPoints(this.data.mapCenter);
+    this.setData({ includePoints: initialIncludePoints });
+
+    await this.fetchSpotsByTab(this.data.currentTab);
   },
 
   // 以 mapCenter 为中心计算景区边界点，用于限制地图显示区域
@@ -102,28 +151,93 @@ Page({
   },
 
    // Tab切换事件
-  onTabChange(e) {
+  async onTabChange(e) {
     const tab = e.detail.value;
     this.setData({ currentTab: tab });
-    this.filterMarkers(tab);
+    await this.fetchSpotsByTab(tab);
   },
 
-  // 点击marker
+  // 点击marker或callout（markerId 即创建 markers 时的 idx，与 allSpots 索引一一对应）
   onMarkerTap(e) {
     const markerId = e.detail.markerId;
-    const spot = (this.data.allSpots || [])
-        .find(m => (m._id || m.id) === markerId || m.id === markerId);
+    const spots = this.data.allSpots || [];
+    const spot = spots[markerId];
     if (spot) {
+      // 切换景点时先停止上一段音频
+      if (this.innerAudioContext) {
+        this.innerAudioContext.stop();
+      }
+      const audioDuration = spot?.audio?.duration;
       this.setData({
         currentSpot: spot,
-        showPopup: true
+        showPopup: true,
+        isAudioPlaying: false,
+        audioTimeDisplay: this.formatDuration(audioDuration)
       });
+    } else {
+      console.warn('未找到对应景点, markerId:', markerId, 'allSpots.length:', spots.length);
     }
   },
 
   // 关闭弹窗
   closePopup() {
-    this.setData({ showPopup: false });
+    if (this.innerAudioContext) {
+      this.innerAudioContext.stop();
+    }
+    this.setData({ showPopup: false, isAudioPlaying: false });
+  },
+
+  // 跳转景点详情页
+  goToDetail() {
+    const spot = this.data.currentSpot;
+    const id = spot?._id;
+    if (!id) {
+      wx.showToast({ title: '缺少景点ID', icon: 'none' });
+      return;
+    }
+    if (this.innerAudioContext) {
+      this.innerAudioContext.stop();
+    }
+    this.setData({ showPopup: false, isAudioPlaying: false });
+    wx.navigateTo({
+      url: `/pages/spots/detail/index?id=${id}`
+    });
+  },
+
+  // 格式化时长显示（秒 -> m:ss）
+  formatDuration(seconds) {
+    if (!seconds) return '0:00';
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return `${min}:${sec.toString().padStart(2, '0')}`;
+  },
+
+  // 播放/暂停语音讲解
+  toggleAudio() {
+    const spot = this.data.currentSpot;
+    const url = spot?.audio?.url;
+    if (!url) {
+      wx.showToast({ title: '暂无语音讲解', icon: 'none' });
+      return;
+    }
+
+    if (!this.innerAudioContext) {
+      this.innerAudioContext = wx.createInnerAudioContext();
+    }
+
+    if (this.data.isAudioPlaying) {
+      this.innerAudioContext.pause();
+      this.setData({ isAudioPlaying: false });
+      return;
+    }
+
+    // 切换景点时 url 可能变化，确保 src 正确
+    if (this.innerAudioContext.src !== url) {
+      this.innerAudioContext.stop();
+      this.innerAudioContext.src = url;
+    }
+    this.innerAudioContext.play();
+    this.setData({ isAudioPlaying: true });
   },
 
   // 地图缩放
@@ -191,12 +305,11 @@ Page({
     }
   },
 
-  // 播放语音（占位功能）
-  playAudio() {
-    wx.showToast({
-      title: '语音讲解功能待开发',
-      icon: 'none'
-    });
+  onUnload() {
+    if (this.innerAudioContext) {
+      this.innerAudioContext.destroy();
+      this.innerAudioContext = null;
+    }
   },
 
   // 分享转发功能

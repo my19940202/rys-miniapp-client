@@ -130,18 +130,14 @@ page {
 }
 
 .spot-images {
-  display: flex;
-  gap: 20rpx;
+  display: block;
   margin-bottom: 30rpx;
-  overflow-x: auto;
-  white-space: nowrap;
 }
 
 .spot-image {
-  width: 400rpx;
-  height: 300rpx;
+  width: 100%;
+  height: 400rpx;
   border-radius: 16rpx;
-  flex-shrink: 0;
 }
 
 .spot-description {
@@ -156,6 +152,29 @@ page {
   margin: 30rpx 0;
 }
 
-.close-btn {
-  margin-top: 20rpx;
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  word-break: break-word;
+  user-select: text;
 }
+
+.audio-player {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  padding: 24rpx 20rpx;
+  border-radius: 16rpx;
+  background: rgba(212, 165, 116, 0.15);
+}
+
+.audio-duration {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
