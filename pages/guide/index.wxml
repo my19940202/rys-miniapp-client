@@ -1,7 +1,7 @@
 <view class="container">
     <!-- 头像区域 -->
     <view class="avatar-section">
-        <image class="avatar" mode="widthFix" src="{{iconSrc}}" />
+        <image class="avatar" mode="heightFix" src="{{iconSrc}}" />
     </view>
 
     <!-- 标题 -->
