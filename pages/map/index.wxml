@@ -81,7 +81,10 @@
       </view>
       
       <!-- 查看详情按钮 -->
-      <t-button bindtap="goToDetail" theme="primary" block>查看详情</t-button>
+      <view class="bottom-btn">
+        <t-button bindtap="goToDetail" theme="primary" block>查看详情</t-button>
+        <t-button bindtap="goNavigation" theme="primary" block>一键导航</t-button>
+      </view>
     </view>
   </t-popup>
 </view>

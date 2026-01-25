@@ -178,3 +178,8 @@ page {
   color: #333;
 }
 
+.bottom-btn {
+  display: flex;
+  gap: 20rpx;
+}
+

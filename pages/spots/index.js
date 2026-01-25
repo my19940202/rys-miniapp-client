@@ -4,7 +4,8 @@ Page({
     page: 0,
     pageSize: 5,
     hasMore: true,
-    loading: false
+    loading: false,
+    selectedTag: '历史人文'
   },
 
   async onLoad() {
@@ -12,8 +13,8 @@ Page({
   },
 
   // 从数据库获取景点列表
-  async fetchSpotsList() {
-    if (this.data.loading || !this.data.hasMore) return;
+  async fetchSpotsList(type) {
+    if (this.data.loading || (type !== 'reload' && !this.data.hasMore)) return;
     this.setData({ loading: true });
 
     try {
@@ -24,13 +25,15 @@ Page({
       const res = await me.globalData.db.collection('scenic_spots')
         .where({
           isDelete: false,
-          status: 'active'
+          status: 'active',
+          tags: this.data.selectedTag
         })
         .field({
           name: true,
           images: true,
           description: true,
-          audio: true
+          audio: true,
+          tags: true
         })
         .skip(page * pageSize)
         .limit(pageSize)
@@ -46,7 +49,7 @@ Page({
       }));
 
       this.setData({
-        spotsList: [...spotsList, ...list],
+        spotsList: type === 'reload' ? list : [...spotsList, ...list],
         page: page + 1,
         hasMore: list.length === pageSize,
         loading: false
@@ -63,19 +66,10 @@ Page({
 
   // 触底加载更多
   onReachBottom() {
+    console.log('onReachBottom')
     this.fetchSpotsList();
   },
 
-  // 下拉刷新
-  async onPullDownRefresh() {
-    this.setData({
-      spotsList: [],
-      page: 0,
-      hasMore: true
-    });
-    await this.fetchSpotsList();
-    wx.stopPullDownRefresh();
-  },
 
   // 跳转到详情页
   goToDetail(e) {
@@ -108,5 +102,16 @@ Page({
       title: '日月山景区导览',
       query: ''
     };
+  },
+
+  // 标签选择改变
+  onTagChange(e) {
+    const me = this;
+    me.setData({
+      selectedTag: e.detail.value,
+      page: 0,
+    }, () => {
+      me.fetchSpotsList('reload');
+    });
   }
 });

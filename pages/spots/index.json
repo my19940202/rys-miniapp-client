@@ -4,6 +4,8 @@
     "navigationBarTitleText": "景点导览",
     "enablePullDownRefresh": true,
     "usingComponents": {
-        "t-icon": "tdesign-miniprogram/icon/icon"
+        "t-icon": "tdesign-miniprogram/icon/icon",
+        "t-radio-group": "tdesign-miniprogram/radio-group/radio-group",
+        "t-radio": "tdesign-miniprogram/radio/radio"
     }
 }

@@ -204,6 +204,20 @@ Page({
     });
   },
 
+  // 一键导航
+  goNavigation() {
+    const spot = this.data.currentSpot;
+    const id = spot?._id;
+    if (!id) {
+      wx.showToast({ title: '缺少景点ID', icon: 'none' });
+      return;
+    }
+    wx.openLocation({
+      latitude: spot.location.latitude,
+      longitude: spot.location.longitude
+    });
+  },
+
   // 格式化时长显示（秒 -> m:ss）
   formatDuration(seconds) {
     if (!seconds) return '0:00';
