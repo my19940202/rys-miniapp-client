@@ -5,7 +5,8 @@ Page({
     pageSize: 5,
     hasMore: true,
     loading: false,
-    searchKeyword: ''
+    searchKeyword: '',
+    selectedTag: '古道博物馆北馆'
   },
 
   async onLoad() {
@@ -13,8 +14,8 @@ Page({
   },
 
   // 从数据库获取展品列表
-  async fetchExhibitsList() {
-    if (this.data.loading || !this.data.hasMore) return;
+  async fetchExhibitsList(type) {
+    if (this.data.loading || (type !== 'reload' && !this.data.hasMore)) return;
     this.setData({ loading: true });
 
     try {
@@ -25,9 +26,10 @@ Page({
       // 构建查询条件
       const query = {
         isDelete: false,
-        status: 'active'
+        status: 'active',
+        tags: this.data.selectedTag
       };
-      
+
       // 如果有搜索关键词，使用正则表达式进行模糊匹配
       if (searchKeyword && searchKeyword.trim()) {
         query.name = me.globalData.db.RegExp({
@@ -43,7 +45,8 @@ Page({
           images: true,
           description: true,
           audio: true,
-          code: true
+          code: true,
+          tags: true
         })
         .skip(page * pageSize)
         .limit(pageSize)
@@ -60,7 +63,7 @@ Page({
       }));
 
       this.setData({
-        exhibitsList: [...exhibitsList, ...list],
+        exhibitsList: type === 'reload' ? list : [...exhibitsList, ...list],
         page: page + 1,
         hasMore: list.length === pageSize,
         loading: false
@@ -141,5 +144,16 @@ Page({
       title: '日月山景区导览',
       query: ''
     };
+  },
+
+  // 标签选择改变
+  onTagChange(e) {
+    const me = this;
+    me.setData({
+      selectedTag: e.detail.value,
+      page: 0
+    }, () => {
+      me.fetchExhibitsList('reload');
+    });
   }
 });

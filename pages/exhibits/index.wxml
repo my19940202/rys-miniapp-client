@@ -12,7 +12,15 @@
     </t-input>
     <t-button slot="extra" theme="primary" size="extra-small" bindtap="handleSearch">搜索</t-button>
   </view>
-  
+
+  <!-- 标签筛选：北馆 / 南馆 -->
+  <view class="filter-section">
+    <t-radio-group value="{{selectedTag}}" bind:change="onTagChange" borderless t-class="filter-radio-group">
+      <t-radio block="{{false}}" label="古道博物馆北馆" value="古道博物馆北馆" />
+      <t-radio block="{{false}}" label="古道博物馆南馆" value="古道博物馆南馆" />
+    </t-radio-group>
+  </view>
+
   <!-- 导览列表 -->
   <view class="visit-item" wx:for="{{exhibitsList}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
     <view class="visit-image">
