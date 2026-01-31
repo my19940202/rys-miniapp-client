@@ -35,7 +35,7 @@
 <t-popup
     visible="{{showGuideVideo}}"
     placement="center"
-    overlay-props="{{ {style: 'background: #FCFAFD'} }}"
+    overlay-props="{{ {style: 'background: ' + bgColor + ';' } }}"
 >
     <view class="video-popup-content" bindtap="skipVideo">
         <view class="video-wrapper">

@@ -129,7 +129,6 @@ page {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #FFF5E6;
 }
 
 .skip-btn {

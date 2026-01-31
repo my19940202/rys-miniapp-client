@@ -81,7 +81,9 @@ Page({
           borderRadius: 12,
           padding: 10,
           textAlign: 'center',
-          display: 'ALWAYS'
+          display: 'ALWAYS',
+          borderWidth: 1,
+          borderColor: '#D4A574'
         }
       }));
 

@@ -10,7 +10,8 @@ Page({
             { icon: '✨', text: '去哪玩？日月山景点必打卡攻略' },
             { icon: '🐪', text: '文成公主与日月山的传说' },
             { icon: '🏔️', text: '日月山的地理与气候小知识' }
-        ]
+        ],
+        bgColor: '#FFFBFE'
     },
     
     // 点击问题跳转到聊天页面
@@ -42,6 +43,11 @@ Page({
             'guide-fox.mp4',
             'guide-tiger.mp4'
         ];
+        const bgcolorMap = [
+            '#FFFBFE',
+            '#FEFDFF',
+            '#FDFCFE',
+        ];
         const icons = [
             'icon-leopard.jpg',
             'icon-fox.jpg',
@@ -52,7 +58,8 @@ Page({
         this.setData({
             videoSrc: videoPath,
             iconSrc: `cloud://cloud1-9gzmqwpsa8336a66.636c-cloud1-9gzmqwpsa8336a66-1393371278/images/guide/${icons[randomIndex]}`,
-            videoLoading: true
+            videoLoading: true,
+            bgColor: bgcolorMap[randomIndex]
         });
     },
 
