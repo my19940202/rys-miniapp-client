@@ -10,13 +10,15 @@ Page({
     scale: 17,
     markers: [],
     includePoints: [], // 地图显示区域限制点
-     // 分类配置
+    // 分类配置
     categories: [
+      { value: '全部', label: '全部', emoji: '✨' },
       { value: '历史人文', label: '历史人文', emoji: '📜' },
       { value: '自然风光', label: '自然风光', emoji: '⛰️' },
       { value: '建筑地标', label: '建筑地标', emoji: '🏛️' }
     ],
-    currentTab: '历史人文',
+    // 默认选中“全部”，展示所有景点
+    currentTab: '全部',
     polylines: [],
     showRoute: false,
     showPopup: false,
@@ -45,12 +47,18 @@ Page({
         await app.getInitPromise();
       }
       const db = app.globalData.db;
+
+      // 查询条件：基础条件 + 非“全部”时才按标签过滤
+      const baseWhere = {
+        isDelete: false,
+        status: 'active'
+      };
+      if (tab && tab !== '全部') {
+        baseWhere.tags = tab;
+      }
+
       const res = await db.collection('scenic_spots')
-        .where({
-          isDelete: false,
-          status: 'active',
-          tags: tab
-        })
+        .where(baseWhere)
         .field({
           name: true,
           location: true,
@@ -106,22 +114,51 @@ Page({
     }
   },
 
-  async onLoad() {
-    this.mapContext = wx.createMapContext('scenic-map');
-    this.innerAudioContext = wx.createInnerAudioContext();
-    this.innerAudioContext.onEnded(() => {
+  // 统一初始化和获取 InnerAudioContext，保证只创建和配置一次
+  initInnerAudioContext() {
+    if (this.innerAudioContext) {
+      return this.innerAudioContext;
+    }
+
+    const ctx = wx.createInnerAudioContext();
+    // iOS 静音模式下仍然播放音频
+    try {
+      if (wx.setInnerAudioOption) {
+        wx.setInnerAudioOption({
+          mixWithOther: true,      // 与其他音频同时播放
+          obeyMuteSwitch: false    // 不受系统静音键影响
+        });
+      }
+    } catch (e) {
+      console.warn('setInnerAudioOption error:', e);
+    }
+
+    // 单实例级别再兜底一层
+    ctx.obeyMuteSwitch = false;
+    ctx.volume = 1;
+
+    // 事件只绑定一遍
+    ctx.onEnded(() => {
       this.setData({ isAudioPlaying: false });
     });
-    this.innerAudioContext.onStop(() => {
+    ctx.onStop(() => {
       this.setData({ isAudioPlaying: false });
     });
-    this.innerAudioContext.onPause(() => {
+    ctx.onPause(() => {
       this.setData({ isAudioPlaying: false });
     });
-    this.innerAudioContext.onError((err) => {
+    ctx.onError((err) => {
       console.warn('audio error:', err);
       this.setData({ isAudioPlaying: false });
     });
+
+    this.innerAudioContext = ctx;
+    return ctx;
+  },
+
+  async onLoad() {
+    this.mapContext = wx.createMapContext('scenic-map');
+    this.initInnerAudioContext();
     
     // 初始化时先设置边界限制（基于初始 mapCenter）
     const initialIncludePoints = this.calculateBoundaryPoints(this.data.mapCenter);
@@ -237,22 +274,20 @@ Page({
       return;
     }
 
-    if (!this.innerAudioContext) {
-      this.innerAudioContext = wx.createInnerAudioContext();
-    }
+    const ctx = this.initInnerAudioContext();
 
     if (this.data.isAudioPlaying) {
-      this.innerAudioContext.pause();
+      ctx.pause();
       this.setData({ isAudioPlaying: false });
       return;
     }
 
     // 切换景点时 url 可能变化，确保 src 正确
-    if (this.innerAudioContext.src !== url) {
-      this.innerAudioContext.stop();
-      this.innerAudioContext.src = url;
+    if (ctx.src !== url) {
+      ctx.stop();
+      ctx.src = url;
     }
-    this.innerAudioContext.play();
+    ctx.play();
     this.setData({ isAudioPlaying: true });
   },
 

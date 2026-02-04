@@ -131,6 +131,12 @@ Component({
 
     showActionMenu: false, // 是否显示操作菜单
     selectedConversation: null, // 当前选中的会话
+
+    // 每日提问次数限制相关
+    dailyLimitCount: 0, // 当天已使用的提问次数
+    dailyLimitMax: 10, // 每日提问上限
+    inputDisabled: false, // 是否禁用输入
+    dailyLimitStorageKey: "GUIDE_CHAT_DAILY_QA_LIMIT", // 本地缓存 key
   },
   attached: async function () {
     const chatMode = this.data.chatMode;
@@ -241,6 +247,8 @@ Component({
         });
       }
     }
+    // 初始化每日提问次数限制
+    this.refreshDailyLimit();
   },
   detached: function () {
     // 在组件实例被从页面节点树移除时执行，释放当前的音频资源
@@ -251,6 +259,36 @@ Component({
     }
   },
   methods: {
+    getTodayDateStr: function () {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+    refreshDailyLimit: function () {
+      const todayStr = this.getTodayDateStr();
+      let stored = null;
+      try {
+        stored = wx.getStorageSync(this.data.dailyLimitStorageKey);
+      } catch (e) {
+        console.log("getStorageSync dailyLimit error", e);
+      }
+      if (!stored || stored.date !== todayStr) {
+        stored = { date: todayStr, count: 0 };
+        try {
+          wx.setStorageSync(this.data.dailyLimitStorageKey, stored);
+        } catch (e) {
+          console.log("setStorageSync dailyLimit error", e);
+        }
+      }
+      const count = stored.count || 0;
+      const inputDisabled = count >= this.data.dailyLimitMax;
+      this.setData({
+        dailyLimitCount: count,
+        inputDisabled,
+      });
+    },
     initRecordManager: async function () {
       const cloudInstance = await getCloudInstance();
       const recorderManager = wx.getRecorderManager();
@@ -966,6 +1004,9 @@ Component({
       this.autoToBottom();
     },
     bindKeyInput: function (e) {
+      if (this.data.inputDisabled) {
+        return;
+      }
       this.setData({
         inputValue: e.detail.value,
       });
@@ -1367,6 +1408,18 @@ Component({
       await this.sendMessage(event.currentTarget.dataset.message);
     },
     sendMessage: async function (message) {
+      // 每日提问次数限制检查
+      this.refreshDailyLimit();
+      if (this.data.dailyLimitCount >= this.data.dailyLimitMax) {
+        wx.showToast({
+          title: "今日提问次数已用完，请明日再来",
+          icon: "none",
+        });
+        this.setData({
+          inputDisabled: true,
+        });
+        return;
+      }
       if (this.data.showFileList) {
         this.setData({
           showFileList: !this.data.showFileList,
@@ -1417,6 +1470,22 @@ Component({
         chatRecords: [...chatRecords, userRecord, record],
         chatStatus: 1, // 聊天状态切换为1发送中
       });
+
+      // 发送成功后增加当日提问计数并写入缓存
+      const todayStr = this.getTodayDateStr();
+      const newCount = (this.data.dailyLimitCount || 0) + 1;
+      this.setData({
+        dailyLimitCount: newCount,
+        inputDisabled: newCount >= this.data.dailyLimitMax,
+      });
+      try {
+        wx.setStorageSync(this.data.dailyLimitStorageKey, {
+          date: todayStr,
+          count: newCount,
+        });
+      } catch (e) {
+        console.log("setStorageSync dailyLimit after send error", e);
+      }
 
       // 新增一轮对话记录时 自动往下滚底
       this.autoToBottom();
