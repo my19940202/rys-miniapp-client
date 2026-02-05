@@ -25,13 +25,9 @@ Page({
   },
 
   async onLoad(options) {
-    const id = options.id;
+    const code = options.code;
     const scene = options.scene;
-    if (id) {
-      await this.loadDetail(id);
-    } else if (scene) {
-      await this.loadDetailByCode(scene);
-    }
+    await this.loadDetailByCode(code || scene);
   },
 
   // 从数据库按 _id 加载详情数据
