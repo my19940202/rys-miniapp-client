@@ -26,12 +26,15 @@ Page({
 
   async onLoad(options) {
     const id = options.id;
+    const scene = options.scene;
     if (id) {
       await this.loadDetail(id);
+    } else if (scene) {
+      await this.loadDetailByCode(scene);
     }
   },
 
-  // 从数据库加载详情数据
+  // 从数据库按 _id 加载详情数据
   async loadDetail(id) {
     try {
       const me = getApp();
@@ -41,28 +44,7 @@ Page({
       const data = res.data;
 
       if (data) {
-        const audioDuration = data.audio?.duration || 0;
-        this.setData({
-          exhibitDetail: {
-            code: data.code,
-            _id: data._id,
-            name: data.name,
-            description: data.description,
-            audioUrl: data.audio?.url || '',
-            duration: audioDuration,
-            durationText: this.formatDuration(audioDuration)
-          },
-          swiperList: data.images || [],
-          duration: audioDuration
-        });
-        wx.setNavigationBarTitle({
-          title: data.code + ' - ' + data.name
-        });
-
-        // 创建音频上下文
-        if (data.audio?.url) {
-          this.createAudioContext(data.audio.url);
-        }
+        this.applyExhibitData(data);
       }
     } catch (err) {
       console.error('获取展品详情失败:', err);
@@ -70,6 +52,57 @@ Page({
         title: '加载失败',
         icon: 'none'
       });
+    }
+  },
+
+  // 从数据库按 code 加载详情数据
+  async loadDetailByCode(code) {
+    try {
+      const me = getApp();
+      await me.getInitPromise();
+
+      const res = await me.globalData.db.collection('exhibits').where({ code }).get();
+      const list = res.data;
+
+      if (list && list.length > 0) {
+        this.applyExhibitData(list[0]);
+      } else {
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none'
+        });
+      }
+    } catch (err) {
+      console.error('获取展品详情失败:', err);
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  // 将单条展品数据应用到页面（setData、标题、音频）
+  applyExhibitData(data) {
+    const audioDuration = data.audio?.duration || 0;
+    this.setData({
+      exhibitDetail: {
+        code: data.code,
+        _id: data._id,
+        name: data.name,
+        description: data.description,
+        audioUrl: data.audio?.url || '',
+        duration: audioDuration,
+        durationText: this.formatDuration(audioDuration)
+      },
+      swiperList: data.images || [],
+      duration: audioDuration
+    });
+    wx.setNavigationBarTitle({
+      title: data.code + ' - ' + data.name
+    });
+
+    if (data.audio?.url) {
+      this.createAudioContext(data.audio.url);
     }
   },
 

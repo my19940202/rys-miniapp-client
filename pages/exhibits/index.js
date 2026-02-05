@@ -115,9 +115,9 @@ Page({
 
   // 跳转到详情页
   goToDetail(e) {
-    const id = e.currentTarget.dataset.id;
+    const code = e.currentTarget.dataset.code;
     wx.navigateTo({
-      url: `/pages/exhibits/detail/index?id=${id}`
+      url: `/pages/exhibits/detail/index?code=${code}`
     });
   },
 
