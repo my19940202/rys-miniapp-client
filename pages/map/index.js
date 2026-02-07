@@ -63,6 +63,7 @@ Page({
           name: true,
           location: true,
           images: true,
+          code: true,
           description: true,
           audio: true,
           tags: true
@@ -229,8 +230,8 @@ Page({
   // 跳转景点详情页
   goToDetail() {
     const spot = this.data.currentSpot;
-    const id = spot?._id;
-    if (!id) {
+    const scene = spot?.code;
+    if (!scene) {
       wx.showToast({ title: '缺少景点ID', icon: 'none' });
       return;
     }
@@ -239,7 +240,7 @@ Page({
     }
     this.setData({ showPopup: false, isAudioPlaying: false });
     wx.navigateTo({
-      url: `/pages/spots/detail/index?id=${id}`
+      url: `/pages/spots/detail/index?scene=${encodeURIComponent(scene)}`
     });
   },
 

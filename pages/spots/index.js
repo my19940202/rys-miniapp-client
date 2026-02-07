@@ -30,6 +30,7 @@ Page({
         })
         .field({
           name: true,
+          code: true,
           images: true,
           description: true,
           audio: true,
@@ -41,6 +42,7 @@ Page({
 
       const list = res.data.map(item => ({
         _id: item._id,
+        code: item.code,
         name: item.name,
         coverImage: item.images?.[0] || '',
         description: item.description,
@@ -73,9 +75,10 @@ Page({
 
   // 跳转到详情页
   goToDetail(e) {
-    const id = e.currentTarget.dataset.id;
+    const scene = e.currentTarget.dataset.scene;
+    if (!scene) return;
     wx.navigateTo({
-      url: `/pages/spots/detail/index?id=${id}`
+      url: `/pages/spots/detail/index?scene=${encodeURIComponent(scene)}`
     });
   },
 

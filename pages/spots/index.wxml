@@ -10,7 +10,7 @@
   </view>
 
   <!-- 导览列表 -->
-  <view class="visit-item" wx:for="{{spotsList}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
+  <view class="visit-item" wx:for="{{spotsList}}" wx:key="_id" bindtap="goToDetail" data-scene="{{item.code}}">
     <view class="visit-image">
       <image src="{{item.coverImage}}" mode="aspectFill" />
     </view>

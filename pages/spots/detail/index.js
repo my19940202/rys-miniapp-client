@@ -25,44 +25,52 @@ Page({
   },
 
   async onLoad(options) {
-    const id = options.id;
-    if (id) {
-      await this.loadDetail(id);
+    const scene = options.scene ? decodeURIComponent(options.scene) : '';
+    if (!scene) {
+      wx.showToast({ title: '缺少景点参数', icon: 'none' });
+      return;
     }
+    await this.loadDetail(scene);
   },
 
-  // 从数据库加载详情数据
-  async loadDetail(id) {
+  // 从数据库加载详情数据（按 code 查询）
+  async loadDetail(scene) {
     try {
       const me = getApp();
       await me.getInitPromise();
 
-      const res = await me.globalData.db.collection('scenic_spots').doc(id).get();
-      const data = res.data;
+      const res = await me.globalData.db.collection('scenic_spots')
+        .where({ code: scene })
+        .limit(1)
+        .get();
+      const data = res.data?.[0];
 
-      if (data) {
-        const audioDuration = data.audio?.duration || 0;
-        this.setData({
-          spotDetail: {
-            _id: data._id,
-            name: data.name,
-            description: data.description,
-            audioUrl: data.audio?.url || '',
-            duration: audioDuration,
-            durationText: this.formatDuration(audioDuration)
-          },
-          swiperList: data.images || [],
-          duration: audioDuration
-        });
+      if (!data) {
+        wx.showToast({ title: '未找到该景点', icon: 'none' });
+        return;
+      }
 
-        wx.setNavigationBarTitle({
-          title: data.name
-        });
+      const audioDuration = data.audio?.duration || 0;
+      this.setData({
+        spotDetail: {
+          _id: data._id,
+          code: data.code,
+          name: data.name,
+          description: data.description,
+          audioUrl: data.audio?.url || '',
+          duration: audioDuration,
+          durationText: this.formatDuration(audioDuration)
+        },
+        swiperList: data.images || [],
+        duration: audioDuration
+      });
 
-        // 创建音频上下文
-        if (data.audio?.url) {
-          this.createAudioContext(data.audio.url);
-        }
+      wx.setNavigationBarTitle({
+        title: data.name
+      });
+
+      if (data.audio?.url) {
+        this.createAudioContext(data.audio.url);
       }
     } catch (err) {
       console.error('获取景点详情失败:', err);
@@ -182,9 +190,10 @@ Page({
   // 分享转发功能
   onShareAppMessage() {
     const { spotDetail, swiperList } = this.data;
+    const scene = spotDetail.code ? encodeURIComponent(spotDetail.code) : '';
     return {
       title: `日月山景区 - ${spotDetail.name || '导览详情'}`,
-      path: `/pages/spots/detail/index?id=${spotDetail._id}`,
+      path: `/pages/spots/detail/index?scene=${scene}`,
       imageUrl: swiperList[0] || ''
     };
   },
@@ -192,9 +201,10 @@ Page({
   // 分享到朋友圈
   onShareTimeline() {
     const { spotDetail, swiperList } = this.data;
+    const scene = spotDetail.code ? encodeURIComponent(spotDetail.code) : '';
     return {
       title: `日月山景区 - ${spotDetail.name || '导览详情'}`,
-      query: `id=${spotDetail._id}`,
+      query: `scene=${scene}`,
       imageUrl: swiperList[0] || ''
     };
   }
