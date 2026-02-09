@@ -12,10 +12,10 @@ Page({
     includePoints: [], // 地图显示区域限制点
     // 分类配置
     categories: [
-      { value: '全部', label: '全部', emoji: '✨' },
-      { value: '历史人文', label: '历史人文', emoji: '📜' },
-      { value: '自然风光', label: '自然风光', emoji: '⛰️' },
-      { value: '建筑地标', label: '建筑地标', emoji: '🏛️' }
+      { value: '全部', label: '全部'},
+      { value: '历史人文', label: '历史人文'},
+      { value: '自然风光', label: '自然风光'},
+      { value: '建筑地标', label: '建筑地标'}
     ],
     // 默认选中“全部”，展示所有景点
     currentTab: '全部',
@@ -71,6 +71,11 @@ Page({
         .get();
 
       const spots = (res?.data || []).filter(s => s?.location?.latitude && s?.location?.longitude);
+      const emojiMap = {
+        '历史人文': '📜',
+        '自然风光': '⛰️',
+        '建筑地标': '🏛️'
+      };
 
       // 1x1 透明 PNG 避免显示默认红点，仅显示 callout
       const TRANSPARENT_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
@@ -83,7 +88,7 @@ Page({
         width: 1,
         height: 1,
         callout: {
-          content: spot.name,
+          content: emojiMap[spot?.tags[0]] + ' ' + spot.name,
           fontSize: 16,
           color: '#222222',
           bgColor: '#ffffff',

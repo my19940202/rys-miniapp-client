@@ -5,7 +5,7 @@
       <t-tab-panel 
         wx:for="{{categories}}" 
         wx:key="value"
-        label="{{item.emoji}} {{item.label}}" 
+        label="{{item.label}}" 
         value="{{item.value}}"
       />
     </t-tabs>
