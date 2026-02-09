@@ -5,6 +5,7 @@
     "usingComponents": {
         "t-icon": "tdesign-miniprogram/icon/icon",
         "t-popup": "tdesign-miniprogram/popup/popup",
+        "t-button": "tdesign-miniprogram/button/button",
         "t-loading": "tdesign-miniprogram/loading/loading"
     }
 }

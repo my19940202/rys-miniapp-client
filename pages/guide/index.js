@@ -21,6 +21,13 @@ Page({
             url: `/pages/guide/chat/index?question=${encodeURIComponent(question)}`
         });
     },
+
+    // 点击按钮直接进入聊天（不带初始问题）
+    onStartChatTap() {
+        wx.navigateTo({
+            url: '/pages/guide/chat/index'
+        });
+    },
     
     // 分享到聊天
     onShareAppMessage() {

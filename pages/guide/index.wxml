@@ -28,6 +28,11 @@
                 <t-icon name="chevron-right-circle" size="48rpx" />
             </view>
         </view>
+        <view class="start-btn">
+           <t-button theme="primary" icon="chat-bubble" block bindtap="onStartChatTap">
+               开始对话
+           </t-button>
+        </view>
     </view>
 </view>
 
